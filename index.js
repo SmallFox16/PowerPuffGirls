@@ -15,13 +15,37 @@ const PADDLE_SPEED = 6;
 // ── State ─────────────────────────────────────────────────────────────────────
 let ballX = GAME_W / 2 - BALL_SIZE / 2;
 let ballY = GAME_H - 25 - BALL_SIZE;
-let ballDX = 3;   // pixels per frame
+let ballDX = 3;
 let ballDY = -3;
 
 let paddleX = GAME_W / 2 - PADDLE_W / 2;
 
-let keys = {};          // currently held keys
+let keys = {};
 let gameRunning = true;
+
+// ── Game Over overlay ─────────────────────────────────────────────────────────
+const overlay = document.createElement("div");
+overlay.id = "gameOverOverlay";
+overlay.innerHTML = "<span>GAME OVER</span>";
+overlay.style.cssText = `
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    color: bisque;
+    font-family: sans-serif;
+    font-size: 3rem;
+    font-weight: bold;
+    letter-spacing: 0.15em;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+`;
+gamespace.appendChild(overlay);
+
+function showGameOver() {
+    overlay.style.display = "flex";
+}
 
 // ── Input: keyboard ───────────────────────────────────────────────────────────
 document.addEventListener("keydown", e => { keys[e.key] = true; });
@@ -42,9 +66,9 @@ gamespace.addEventListener("touchend", () => { lastTouchX = null; }, { passive: 
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function applyPositions() {
-    ball.style.left   = ballX + "px";
-    ball.style.bottom = "unset";
-    ball.style.top    = ballY + "px";
+    ball.style.left      = ballX + "px";
+    ball.style.bottom    = "unset";
+    ball.style.top       = ballY + "px";
     ball.style.transform = "none";
 
     paddle.style.left      = paddleX + "px";
@@ -87,18 +111,17 @@ function update() {
         ballX <= paddleX + PADDLE_W
     ) {
         ballY = paddleTop - BALL_SIZE;
-        // Angle the bounce based on where the ball hits the paddle
         const hitPos = (ballX + BALL_SIZE / 2 - paddleX) / PADDLE_W; // 0–1
-        const angle  = (hitPos - 0.5) * 2;   // -1 (left) to 1 (right)
+        const angle  = (hitPos - 0.5) * 2;   // -1 to 1
         const speed  = Math.sqrt(ballDX * ballDX + ballDY * ballDY);
         ballDX = angle * speed;
         ballDY = -Math.abs(ballDY);
     }
 
-    // Ball out of bounds (fell below paddle)
+    // Ball out of bounds
     if (ballY > GAME_H) {
         gameRunning = false;
-        console.log("Game over – ball missed paddle");
+        showGameOver();
         return;
     }
 
