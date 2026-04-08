@@ -5,6 +5,7 @@ body {
 
 #gamespace {
     background-color: cornflowerblue;
+    border: 10px solid darkslategray;
     width: 800px;
     height: 700px;
     margin: 0 auto;
