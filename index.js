@@ -14,7 +14,7 @@ const PADDLE_SPEED = 6;
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let ballX = GAME_W / 2 - BALL_SIZE / 2;
-let ballY = GAME_H - 25 - BALL_SIZE;
+let ballY = GAME_H - 200 - BALL_SIZE;
 let ballDX = 3;
 let ballDY = -3;
 
