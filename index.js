@@ -10,18 +10,19 @@ const GAME_H = gamespace.clientHeight;
 const BALL_SIZE = ball.offsetWidth;
 const PADDLE_W = paddle.offsetWidth;
 const PADDLE_H = paddle.offsetHeight;
-const PADDLE_SPEED = 6;
+const PADDLE_SPEED = 400;
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let ballX = GAME_W / 2 - BALL_SIZE / 2;
 let ballY = GAME_H - 200 - BALL_SIZE;
-let ballDX = 3;
-let ballDY = -3;
+let ballDX = 200;
+let ballDY = -200;
 
 let paddleX = GAME_W / 2 - PADDLE_W / 2;
 
 let keys = {};
 let gameRunning = true;
+let lastTime = null;
 
 // ── Game Over overlay ─────────────────────────────────────────────────────────
 const overlay = document.createElement("div");
@@ -64,6 +65,12 @@ gamespace.addEventListener("touchmove", e => {
 }, { passive: true });
 gamespace.addEventListener("touchend", () => { lastTouchX = null; }, { passive: true });
 
+// ── Input: mouse ─────────────────────────────────────────────────────────────
+gamespace.addEventListener("mousemove", e => {
+    const rect = gamespace.getBoundingClientRect();
+    paddleX = Math.max(0, Math.min(GAME_W - PADDLE_W, e.clientX - rect.left - PADDLE_W / 2));
+});
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function applyPositions() {
     ball.style.left      = ballX + "px";
@@ -76,16 +83,20 @@ function applyPositions() {
 }
 
 // ── Main loop ─────────────────────────────────────────────────────────────────
-function update() {
+function update(timestamp) {
     if (!gameRunning) return;
 
+    if (lastTime === null) lastTime = timestamp;
+    const dt = (timestamp - lastTime) / 1000;
+    lastTime = timestamp;
+
     // Paddle movement (arrow keys)
-    if (keys["ArrowLeft"])  paddleX = Math.max(0, paddleX - PADDLE_SPEED);
-    if (keys["ArrowRight"]) paddleX = Math.min(GAME_W - PADDLE_W, paddleX + PADDLE_SPEED);
+    if (keys["ArrowLeft"])  paddleX = Math.max(0, paddleX - PADDLE_SPEED * dt);
+    if (keys["ArrowRight"]) paddleX = Math.min(GAME_W - PADDLE_W, paddleX + PADDLE_SPEED * dt);
 
     // Move ball
-    ballX += ballDX;
-    ballY += ballDY;
+    ballX += ballDX * dt;
+    ballY += ballDY * dt;
 
     // Wall collisions (left / right)
     if (ballX <= 0) {
@@ -111,10 +122,6 @@ function update() {
         ballX <= paddleX + PADDLE_W
     ) {
         ballY = paddleTop - BALL_SIZE;
-        const hitPos = (ballX + BALL_SIZE / 2 - paddleX) / PADDLE_W; // 0–1
-        const angle  = (hitPos - 0.5) * 2;   // -1 to 1
-        const speed  = Math.sqrt(ballDX * ballDX + ballDY * ballDY);
-        ballDX = angle * speed;
         ballDY = -Math.abs(ballDY);
     }
 
