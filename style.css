@@ -20,6 +20,8 @@ body {
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
+    border-radius: 10px;
+    background: linear-gradient(to right, #f06, #f90);
   }
 
 #brickContainer {
@@ -31,9 +33,10 @@ body {
     height: 10px;
     width: 10px;
     background-color: black;
-    position: absolute;
-
+    position: absolute; 
     left: 50%;
     transform: translateX(-50%);
     bottom: 25px;
+    border-radius: 50%;  
+    box-shadow: 0 0 8px 4px rgba(255, 255, 100, 0.8);
 }
