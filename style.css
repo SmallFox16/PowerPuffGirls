@@ -6,8 +6,8 @@ body {
 #gamespace {
     background-color: cornflowerblue;
     border: 10px solid darkslategray;
-    width: 800px;
-    height: 700px;
+    width: 725px;
+    height: 625px;
     margin: 0 auto;
     position: relative;
 }
