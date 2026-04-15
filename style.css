@@ -27,6 +27,18 @@ body {
 #brickContainer {
     background-color: darkolivegreen;
     height: 200px;
+    position: relative;
+  }
+
+.brick {
+    width: 80px;
+    height: 30px;
+    background-color: dodgerblue;
+    position: absolute;
+    top: 85px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 4px;
   }
 
 #ball {
