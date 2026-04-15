@@ -12,6 +12,23 @@ body {
     position: relative;
 }
 
+#infoTracker {
+  border: 10px solid salmon;
+  width: 725px;
+  height: 70px;
+  margin: 0 auto;
+  position: relative;
+}
+
+#livesDisplay {
+  padding-left: 15px;
+  text-align: left;
+}
+
+#livesCount {
+  
+}
+
 #paddle {
     background-color: bisque;
     position: absolute;
