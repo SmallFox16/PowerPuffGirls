@@ -20,13 +20,23 @@ body {
   position: relative;
 }
 
-#livesDisplay {
-  padding-left: 15px;
-  text-align: left;
+.livesDisplay {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  padding: 10px;
 }
 
-#livesCount {
-  
+.life {
+  width: 20px;
+  height: 20px;
+  background-color: black;
+  border-radius: 50%;
+  border: 2px solid bisque;
+}
+
+.lifeLost {
+  background-color: gray;
 }
 
 #paddle {
