@@ -3,6 +3,7 @@
 const gamespace = document.getElementById("gamespace");
 const ball = document.getElementById("ball");
 const paddle = document.getElementById("paddle");
+const lifeElements = document.querySelectorAll(".life");
 
 // ── Dimensions ────────────────────────────────────────────────────────────────
 const GAME_W = gamespace.clientWidth;
@@ -23,6 +24,8 @@ let paddleX = GAME_W / 2 - PADDLE_W / 2;
 let keys = {};
 let gameRunning = true;
 let lastTime = null;
+
+let lives = 3;
 
 // ── Game Over overlay ─────────────────────────────────────────────────────────
 const overlay = document.createElement("div");
@@ -81,6 +84,27 @@ function applyPositions() {
     paddle.style.left      = paddleX + "px";
     paddle.style.transform = "none";
 }
+
+function updateLivesDisplay() {
+    for (let i = 0; i < lifeElements.length; i++) {
+        if (i < lives) {
+            lifeElements[i].classList.remove("lifeLost");
+        } else {
+            lifeElements[i].classList.add("lifeLost");
+        }
+    }
+} // Tracks number of lives for the display
+
+function loseLife() {
+    if (lives > 0) {
+        lives--;
+        updateLivesDisplay();
+    }
+
+    if (lives === 0) {
+        showGameOver();
+    }
+} // Allows for display to change if life lost, triggers game over at 0 lives
 
 // ── Main loop ─────────────────────────────────────────────────────────────────
 function update(timestamp) {
