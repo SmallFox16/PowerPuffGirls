@@ -109,6 +109,8 @@ function ballBrickCollision(){
     if (hit) {
         ballDY *= -1; // TODO: replace with angle-based bounce logic
         brick1Alive = false;
+
+        brick1.classList.add("brickDestroyed");
     }
 }
 function updateLivesDisplay() {

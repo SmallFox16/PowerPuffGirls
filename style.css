@@ -74,6 +74,10 @@ body {
     border-radius: 4px;
   }
 
+.brickDestroyed {
+    visibility: hidden;
+  }
+
 #ball {
     height: 10px;
     width: 10px;
