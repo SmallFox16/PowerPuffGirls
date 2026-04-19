@@ -3,6 +3,8 @@
 const gamespace = document.getElementById("gamespace");
 const ball = document.getElementById("ball");
 const paddle = document.getElementById("paddle");
+const brick1 = document.getElementById("brick1");
+
 const lifeElements = document.querySelectorAll(".life");
 
 // ── Dimensions ────────────────────────────────────────────────────────────────
@@ -12,6 +14,11 @@ const BALL_SIZE = ball.offsetWidth;
 const PADDLE_W = paddle.offsetWidth;
 const PADDLE_H = paddle.offsetHeight;
 const PADDLE_SPEED = 400;
+
+const BRICK_W = brick1.offsetWidth;
+const BRICK_H = brick1.offsetHeight;
+const brick1X = brick1.offsetLeft + document.getElementById('brickContainer').offsetLeft - BRICK_W / 2;
+const brick1Y = brick1.offsetTop + document.getElementById('brickContainer').offsetTop;
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let ballX = GAME_W / 2 - BALL_SIZE / 2;
@@ -24,6 +31,9 @@ let paddleX = GAME_W / 2 - PADDLE_W / 2;
 let keys = {};
 let gameRunning = true;
 let lastTime = null;
+
+// brick 1 state. 
+let brick1Alive = true;
 
 let lives = 3;
 
@@ -85,6 +95,22 @@ function applyPositions() {
     paddle.style.transform = "none";
 }
 
+// Brick-Ball collision handler function. Auggie 4/17
+// Checks if ball hitbox and brick are overlapping when called.
+// If overlapping, bounces ball. 
+// TODO: Brick removal should be added here later. I added an alive state for collision but it needs a visual 
+// indication for brick destruction.
+function ballBrickCollision(){
+    if (!brick1Alive) return;
+    const hit = ballX + BALL_SIZE > brick1X &&
+        ballX < brick1X + BRICK_W &&
+        ballY + BALL_SIZE > brick1Y &&
+        ballY < brick1Y + BRICK_H;
+    if (hit) {
+        ballDY *= -1; // TODO: replace with angle-based bounce logic
+        brick1Alive = false;
+    }
+}
 function updateLivesDisplay() {
     for (let i = 0; i < lifeElements.length; i++) {
         if (i < lives) {
@@ -148,6 +174,9 @@ function update(timestamp) {
         ballY = paddleTop - BALL_SIZE;
         ballDY = -Math.abs(ballDY);
     }
+    
+    // Brick collision
+    ballBrickCollision();
 
     // Ball out of bounds
     if (ballY > GAME_H) {
