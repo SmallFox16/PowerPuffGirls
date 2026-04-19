@@ -5,6 +5,51 @@ const ball = document.getElementById("ball");
 const paddle = document.getElementById("paddle");
 const lifeElements = document.querySelectorAll(".life");
 
+// ── Brick wall ────────────────────────────────────────────────────────────────
+const brickContainer = document.getElementById("brickContainer");
+
+// Named constants so layout can be adjusted in one place without
+// hunting for magic numbers through the loop.
+// Math: 10 * 60px + 9 * 7px + 8px offset = 671px (fits 725px canvas)
+//       5 * 25px + 4 * 7px + 8px offset = 161px (fits 200px container)
+const BRICK_COLS  = 10;
+const BRICK_ROWS  = 5;
+const BRICK_W     = 60;
+const BRICK_H     = 25;
+const BRICK_GAP   = 7;
+const BRICK_OFF_X = 8;   // left margin so bricks don't touch the container edge
+const BRICK_OFF_Y = 8;   // top margin so bricks don't touch the top of the container
+
+// One color per row, indexed top-to-bottom.
+// This is temporary just for visual feedback.
+const ROW_COLORS = ["#DF414D", "#EF7B99", "#62C3AE", "#51BBE7", "#86D43A"];
+
+// Declared at module scope so collision detection (PBI #28) can iterate
+// this array on every frame without re-querying the DOM.
+let bricks = [];
+
+for(let r = 0; r < BRICK_ROWS; r++) {
+    for(let c = 0; c < BRICK_COLS; c++) {
+        const el = document.createElement("div");
+        el.classList.add("brick");
+
+        // Position is computed from row/col index so every brick lands
+        // in the correct grid cell regardless of total rows or columns.
+        const x = BRICK_OFF_X + c * (BRICK_W + BRICK_GAP);
+        const y = BRICK_OFF_Y + r * (BRICK_H + BRICK_GAP);
+
+        el.style.left            = x + "px";
+        el.style.top             = y + "px";
+        el.style.backgroundColor = ROW_COLORS[r];
+
+        brickContainer.appendChild(el);
+
+        // x and y are stored alongside the element so collision code
+        // never needs to recalculate position from the DOM each frame.
+        bricks.push({el: el, x: x, y: y, active: true});
+    }
+} // Generates 5 rows x 10 columns = 50 bricks into #brickContainer
+
 // ── Dimensions ────────────────────────────────────────────────────────────────
 const GAME_W = gamespace.clientWidth;
 const GAME_H = gamespace.clientHeight;
