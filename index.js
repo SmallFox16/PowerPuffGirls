@@ -3,8 +3,7 @@
 const gamespace = document.getElementById("gamespace");
 const ball = document.getElementById("ball");
 const paddle = document.getElementById("paddle");
-const brick1 = document.getElementById("brick1");
-
+const lifeElements = document.querySelectorAll(".life");
 
 // ── Dimensions ────────────────────────────────────────────────────────────────
 const GAME_W = gamespace.clientWidth;
@@ -31,9 +30,7 @@ let keys = {};
 let gameRunning = true;
 let lastTime = null;
 
-// brick 1 state. 
-let brick1Alive = true;
-
+let lives = 3;
 
 // ── Game Over overlay ─────────────────────────────────────────────────────────
 const overlay = document.createElement("div");
@@ -92,6 +89,48 @@ function applyPositions() {
     paddle.style.left      = paddleX + "px";
     paddle.style.transform = "none";
 }
+
+function updateLivesDisplay() {
+    for (let i = 0; i < lifeElements.length; i++) {
+        if (i < lives) {
+            lifeElements[i].classList.remove("lifeLost");
+        } else {
+            lifeElements[i].classList.add("lifeLost");
+        }
+    }
+} // Tracks number of lives for the display
+
+function loseLife() {
+    if (lives > 0) {
+        lives--;
+        updateLivesDisplay();
+    }
+
+    if (lives === 0) {
+        showGameOver();
+    }
+} // Allows for display to change if life lost, triggers game over at 0 lives
+
+function updateLivesDisplay() {
+    for (let i = 0; i < lifeElements.length; i++) {
+        if (i < lives) {
+            lifeElements[i].classList.remove("lifeLost");
+        } else {
+            lifeElements[i].classList.add("lifeLost");
+        }
+    }
+} // Tracks number of lives for the display
+
+function loseLife() {
+    if (lives > 0) {
+        lives--;
+        updateLivesDisplay();
+    }
+
+    if (lives === 0) {
+        showGameOver();
+    }
+} // Allows for display to change if life lost, triggers game over at 0 lives
 
 // Brick-Ball collision handler function. Auggie 4/17
 // Checks if ball hitbox and brick are overlapping when called.
