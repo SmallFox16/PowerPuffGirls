@@ -20,13 +20,29 @@ body {
   position: relative;
 }
 
-#livesDisplay {
-  padding-left: 15px;
-  text-align: left;
+.livesDisplay {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  padding: 10px;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 20px;
 }
 
-#livesCount {
-  
+.life {
+  width: 20px;
+  height: 20px;
+  background-color: slategray;
+  border-radius: 50%;
+  border: 2px solid black;
+}
+
+.lifeLost {
+  width: 20px;
+  height: 20px;
+  background-color: silver;
+  border-radius: 50%;
+  border: 2px solid gray;
 }
 
 #paddle {
