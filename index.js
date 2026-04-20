@@ -20,9 +20,8 @@ const BRICK_GAP   = 7;
 const BRICK_OFF_X = 60;  // ~1 brick width inset from each side
 const BRICK_OFF_Y = 58;  // ~2 brick heights below the ceiling
 
-// One color per row, indexed top-to-bottom.
-// This is temporary just for visual feedback.
-const ROW_COLORS = ["#DF414D", "#EF7B99", "#62C3AE", "#51BBE7", "#86D43A"];
+// One PPG palette color per row, top-to-bottom.
+const ROW_COLORS = ["#df414d", "#f5d742", "#62c3ae", "#51bbe7", "#86d43a"];
 
 // Declared at module scope so collision detection (PBI #28) can iterate
 // this array on every frame without re-querying the DOM.
@@ -44,9 +43,10 @@ for(let r = 0; r < BRICK_ROWS; r++) {
         const x = BRICK_OFF_X + c * BRICK_STEP + rowOffset;
         const y = BRICK_OFF_Y + r * (BRICK_H + BRICK_GAP);
 
-        el.style.left            = x + "px";
-        el.style.top             = y + "px";
-        el.style.backgroundColor = ROW_COLORS[r];
+        el.style.left = x + "px";
+        el.style.top  = y + "px";
+        const color = ROW_COLORS[r];
+        el.style.background = `linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 60%), linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 45%), ${color}`;
 
         brickContainer.appendChild(el);
 
@@ -95,14 +95,15 @@ overlay.style.cssText = `
     display: none;
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    color: bisque;
+    background: rgba(247, 207, 217, 0.8);
+    color: #3a2a3f;
     font-family: sans-serif;
     font-size: 3rem;
     font-weight: bold;
     letter-spacing: 0.15em;
     align-items: center;
     justify-content: center;
+    border-radius: 12px;
     z-index: 10;
 `;
 gamespace.appendChild(overlay);
@@ -119,14 +120,15 @@ winOverlay.style.cssText = `
     display: none;
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    color: gold;
+    background: rgba(247, 207, 217, 0.8);
+    color: #3a2a3f;
     font-family: sans-serif;
     font-size: 3rem;
     font-weight: bold;
     letter-spacing: 0.15em;
     align-items: center;
     justify-content: center;
+    border-radius: 12px;
     z-index: 10;
 `;
 gamespace.appendChild(winOverlay);
@@ -158,7 +160,7 @@ launchPrompt.style.cssText = `
     display: flex;
     position: absolute;
     inset: 0;
-    color: bisque;
+    color: #3a2a3f;
     font-family: sans-serif;
     font-size: 1.5rem;
     font-weight: bold;
