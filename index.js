@@ -111,6 +111,39 @@ function showGameOver() {
     overlay.style.display = "flex";
 }
 
+// ── Win overlay ──────────────────────────────────────────────────────────────
+const winOverlay = document.createElement("div");
+winOverlay.id = "winOverlay";
+winOverlay.innerHTML = "<span>YOU WIN!</span>";
+winOverlay.style.cssText = `
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    color: gold;
+    font-family: sans-serif;
+    font-size: 3rem;
+    font-weight: bold;
+    letter-spacing: 0.15em;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+`;
+gamespace.appendChild(winOverlay);
+
+function showWin() {
+    winOverlay.style.display = "flex";
+}
+
+function checkWin() {
+    if (bricks.every(brick => !brick.active)) {
+        gameRunning = false;
+        showWin();
+        return true;
+    }
+    return false;
+}
+
 // ── Launch prompt overlay ───────────────────────────────────────────────────
 // Created in JS (not HTML) to keep the prompt co-located with the logic that
 // shows and hides it. This follows the same pattern as the game-over overlay.
@@ -325,6 +358,7 @@ function update(timestamp) {
     }
 
     // Paddle collision
+    const BALL_SPEED = Math.sqrt(ballDX * ballDX + ballDY * ballDY);
     const paddleTop = GAME_H - PADDLE_H - PADDLE_GAP;
     if (
         ballY + BALL_SIZE >= paddleTop &&
@@ -349,6 +383,9 @@ function update(timestamp) {
     
     // Brick collision
     ballBrickCollision();
+
+    // Check if all bricks are destroyed — player wins
+    if (checkWin()) return;
 
     // Ball out of bounds — lose a life and reset to paddle
     if (ballY > GAME_H) {
