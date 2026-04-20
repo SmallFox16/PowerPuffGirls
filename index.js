@@ -57,11 +57,7 @@ const BALL_SIZE = ball.offsetWidth;
 const PADDLE_W = paddle.offsetWidth;
 const PADDLE_H = paddle.offsetHeight;
 const PADDLE_SPEED = 400;
-
-const BRICK1W = brick1.offsetWidth;
-const BRICK1H = brick1.offsetHeight;
-const brick1X = brick1.offsetLeft + document.getElementById('brickContainer').offsetLeft - BRICK_W / 2;
-const brick1Y = brick1.offsetTop + document.getElementById('brickContainer').offsetTop;
+const PADDLE_GAP = 10;
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let ballX = GAME_W / 2 - BALL_SIZE / 2;
@@ -210,6 +206,7 @@ function applyPositions() {
     ball.style.transform = "none";
 
     paddle.style.left      = paddleX + "px";
+    paddle.style.top       = (GAME_H - PADDLE_H - PADDLE_GAP) + "px"; // Auggie 4/19 this raises the paddle. 
     paddle.style.transform = "none";
 }
 
@@ -269,7 +266,7 @@ function update(timestamp) {
 
     if (!launched) {
         ballX = paddleX + PADDLE_W / 2 - BALL_SIZE / 2;
-        ballY = GAME_H - PADDLE_H - BALL_SIZE - 2; // 2px gap so ball sits on top of paddle, not inside it
+        ballY = GAME_H - PADDLE_H - BALL_SIZE - PADDLE_GAP - 2; // 2px gap so ball sits on top of paddle, not inside it
         applyPositions();
         requestAnimationFrame(update);
         return;
@@ -300,7 +297,7 @@ function update(timestamp) {
     }
 
     // Paddle collision
-    const paddleTop = GAME_H - PADDLE_H;
+    const paddleTop = GAME_H - PADDLE_H - PADDLE_GAP;
     if (
         ballY + BALL_SIZE >= paddleTop &&
         ballY + BALL_SIZE <= paddleTop + PADDLE_H &&
