@@ -60,8 +60,8 @@ const PADDLE_W = paddle.offsetWidth;
 const PADDLE_H = paddle.offsetHeight;
 const PADDLE_SPEED = 400;
 
-const BRICK_W = brick1.offsetWidth;
-const BRICK_H = brick1.offsetHeight;
+const BRICK1W = brick1.offsetWidth;
+const BRICK1H = brick1.offsetHeight;
 const brick1X = brick1.offsetLeft + document.getElementById('brickContainer').offsetLeft - BRICK_W / 2;
 const brick1Y = brick1.offsetTop + document.getElementById('brickContainer').offsetTop;
 
