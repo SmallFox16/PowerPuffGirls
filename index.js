@@ -220,15 +220,21 @@ function updateLivesDisplay() {
 } // Tracks number of lives for the display
 
 function loseLife() {
-    if (lives > 0) {
-        lives--;
-        updateLivesDisplay();
+    lives--;
+    updateLivesDisplay();
+
+    if (lives <= 0) {
+        gameRunning = false;
+        showGameOver();
+        return;
     }
 
-    if (lives === 0) {
-        showGameOver();
-    }
-} // Allows for display to change if life lost, triggers game over at 0 lives
+    // Reset ball to paddle for re-launch
+    launched = false;
+    ballDX = 200;
+    ballDY = -200;
+    launchPrompt.style.display = 'flex';
+}
 
 // Brick-Ball collision handler function. Auggie 4/19
 // Checks entire array of bricks "bricks" against the ball's position to detect and handle collisions.
@@ -342,10 +348,12 @@ function update(timestamp) {
     // Brick collision
     ballBrickCollision();
 
-    // Ball out of bounds
+    // Ball out of bounds — lose a life and reset to paddle
     if (ballY > GAME_H) {
-        gameRunning = false;
-        showGameOver();
+        loseLife();
+        if (!gameRunning) return;
+        applyPositions();
+        requestAnimationFrame(update);
         return;
     }
 
