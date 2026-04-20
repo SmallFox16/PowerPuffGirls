@@ -3,8 +3,6 @@
 const gamespace = document.getElementById("gamespace");
 const ball = document.getElementById("ball");
 const paddle = document.getElementById("paddle");
-const brick1 = document.getElementById("brick1");
-
 const lifeElements = document.querySelectorAll(".life");
 
 // ── Brick wall ────────────────────────────────────────────────────────────────
@@ -85,8 +83,6 @@ let lastTime = null;
 // - Cooper
 
 let launched = false;
-// brick 1 state. 
-let brick1Alive = true;
 
 let lives = 3;
 
@@ -217,22 +213,6 @@ function applyPositions() {
     paddle.style.transform = "none";
 }
 
-// Brick-Ball collision handler function. Auggie 4/17
-// Checks if ball hitbox and brick are overlapping when called.
-// If overlapping, bounces ball. 
-// TODO: Brick removal should be added here later. I added an alive state for collision but it needs a visual 
-// indication for brick destruction.
-function ballBrickCollision(){
-    if (!brick1Alive) return;
-    const hit = ballX + BALL_SIZE > brick1X &&
-        ballX < brick1X + BRICK_W &&
-        ballY + BALL_SIZE > brick1Y &&
-        ballY < brick1Y + BRICK_H;
-    if (hit) {
-        ballDY *= -1; // TODO: replace with angle-based bounce logic
-        brick1Alive = false;
-    }
-}
 function updateLivesDisplay() {
     for (let i = 0; i < lifeElements.length; i++) {
         if (i < lives) {
@@ -254,6 +234,24 @@ function loseLife() {
     }
 } // Allows for display to change if life lost, triggers game over at 0 lives
 
+// Brick-Ball collision handler function. Auggie 4/19
+// Checks entire array of bricks "bricks" against the ball's position to detect and handle collisions.
+// TODO: Brick removal should be added here later. 
+// IMPORTANT: Brick disappearing can be handled here.
+function ballBrickCollision(){
+    for (const brick of bricks) {
+        if (!brick.active) continue;
+        const hit = ballX + BALL_SIZE > brick.x &&
+                    ballX < brick.x + BRICK_W &&
+                    ballY + BALL_SIZE > brick.y &&
+                    ballY < brick.y + BRICK_H;
+        if (hit) {
+            ballDY *= -1; // TODO: replace with angle-based bounce logic
+            brick.active = false;
+            break; // early exit, ball can only hit one brick per frame
+        }
+    }
+}
 // ── Main loop ─────────────────────────────────────────────────────────────────
 function update(timestamp) {
     if (!gameRunning) return;
