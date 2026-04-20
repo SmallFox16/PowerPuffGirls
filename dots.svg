@@ -1,0 +1,51 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'>
+<g fill='#df414d' fill-opacity='0.18'>
+<!-- Cluster 1 center(80,85) -->
+<circle cx='50' cy='60' r='3'/><circle cx='68' cy='52' r='3'/><circle cx='88' cy='52' r='3'/><circle cx='105' cy='60' r='3'/><circle cx='112' cy='75' r='3'/><circle cx='112' cy='95' r='3'/><circle cx='105' cy='110' r='3'/><circle cx='88' cy='118' r='3'/><circle cx='68' cy='118' r='3'/><circle cx='50' cy='110' r='3'/><circle cx='44' cy='95' r='3'/><circle cx='44' cy='75' r='3'/>
+<circle cx='62' cy='68' r='2.5'/><circle cx='78' cy='65' r='2.5'/><circle cx='94' cy='68' r='2.5'/><circle cx='102' cy='80' r='2.5'/><circle cx='102' cy='95' r='2.5'/><circle cx='94' cy='105' r='2.5'/><circle cx='78' cy='108' r='2.5'/><circle cx='62' cy='105' r='2.5'/><circle cx='55' cy='95' r='2.5'/><circle cx='55' cy='80' r='2.5'/>
+<circle cx='72' cy='78' r='2'/><circle cx='86' cy='78' r='2'/><circle cx='92' cy='88' r='2'/><circle cx='86' cy='98' r='2'/><circle cx='72' cy='98' r='2'/><circle cx='66' cy='88' r='2'/>
+<circle cx='80' cy='88' r='1.5'/>
+
+<!-- Cluster 2 center(280,80) -->
+<circle cx='250' cy='55' r='3'/><circle cx='268' cy='47' r='3'/><circle cx='288' cy='47' r='3'/><circle cx='305' cy='55' r='3'/><circle cx='312' cy='70' r='3'/><circle cx='312' cy='90' r='3'/><circle cx='305' cy='105' r='3'/><circle cx='288' cy='113' r='3'/><circle cx='268' cy='113' r='3'/><circle cx='250' cy='105' r='3'/><circle cx='244' cy='90' r='3'/><circle cx='244' cy='70' r='3'/>
+<circle cx='262' cy='63' r='2.5'/><circle cx='278' cy='60' r='2.5'/><circle cx='294' cy='63' r='2.5'/><circle cx='302' cy='75' r='2.5'/><circle cx='302' cy='90' r='2.5'/><circle cx='294' cy='100' r='2.5'/><circle cx='278' cy='103' r='2.5'/><circle cx='262' cy='100' r='2.5'/><circle cx='255' cy='90' r='2.5'/><circle cx='255' cy='75' r='2.5'/>
+<circle cx='272' cy='73' r='2'/><circle cx='286' cy='73' r='2'/><circle cx='292' cy='83' r='2'/><circle cx='286' cy='93' r='2'/><circle cx='272' cy='93' r='2'/><circle cx='266' cy='83' r='2'/>
+<circle cx='280' cy='83' r='1.5'/>
+
+<!-- Cluster 3 center(180,190) -->
+<circle cx='150' cy='165' r='3'/><circle cx='168' cy='157' r='3'/><circle cx='188' cy='157' r='3'/><circle cx='205' cy='165' r='3'/><circle cx='212' cy='180' r='3'/><circle cx='212' cy='200' r='3'/><circle cx='205' cy='215' r='3'/><circle cx='188' cy='223' r='3'/><circle cx='168' cy='223' r='3'/><circle cx='150' cy='215' r='3'/><circle cx='144' cy='200' r='3'/><circle cx='144' cy='180' r='3'/>
+<circle cx='162' cy='173' r='2.5'/><circle cx='178' cy='170' r='2.5'/><circle cx='194' cy='173' r='2.5'/><circle cx='202' cy='185' r='2.5'/><circle cx='202' cy='200' r='2.5'/><circle cx='194' cy='210' r='2.5'/><circle cx='178' cy='213' r='2.5'/><circle cx='162' cy='210' r='2.5'/><circle cx='155' cy='200' r='2.5'/><circle cx='155' cy='185' r='2.5'/>
+<circle cx='172' cy='183' r='2'/><circle cx='186' cy='183' r='2'/><circle cx='192' cy='193' r='2'/><circle cx='186' cy='203' r='2'/><circle cx='172' cy='203' r='2'/><circle cx='166' cy='193' r='2'/>
+<circle cx='180' cy='193' r='1.5'/>
+
+<!-- Cluster 4 center(60,260) -->
+<circle cx='30' cy='235' r='3'/><circle cx='48' cy='227' r='3'/><circle cx='68' cy='227' r='3'/><circle cx='85' cy='235' r='3'/><circle cx='92' cy='250' r='3'/><circle cx='92' cy='270' r='3'/><circle cx='85' cy='285' r='3'/><circle cx='68' cy='293' r='3'/><circle cx='48' cy='293' r='3'/><circle cx='30' cy='285' r='3'/><circle cx='24' cy='270' r='3'/><circle cx='24' cy='250' r='3'/>
+<circle cx='42' cy='243' r='2.5'/><circle cx='58' cy='240' r='2.5'/><circle cx='74' cy='243' r='2.5'/><circle cx='82' cy='255' r='2.5'/><circle cx='82' cy='270' r='2.5'/><circle cx='74' cy='280' r='2.5'/><circle cx='58' cy='283' r='2.5'/><circle cx='42' cy='280' r='2.5'/><circle cx='35' cy='270' r='2.5'/><circle cx='35' cy='255' r='2.5'/>
+<circle cx='52' cy='253' r='2'/><circle cx='66' cy='253' r='2'/><circle cx='72' cy='263' r='2'/><circle cx='66' cy='273' r='2'/><circle cx='52' cy='273' r='2'/><circle cx='46' cy='263' r='2'/>
+<circle cx='60' cy='263' r='1.5'/>
+
+<!-- Cluster 5 center(320,240) -->
+<circle cx='290' cy='215' r='3'/><circle cx='308' cy='207' r='3'/><circle cx='328' cy='207' r='3'/><circle cx='345' cy='215' r='3'/><circle cx='352' cy='230' r='3'/><circle cx='352' cy='250' r='3'/><circle cx='345' cy='265' r='3'/><circle cx='328' cy='273' r='3'/><circle cx='308' cy='273' r='3'/><circle cx='290' cy='265' r='3'/><circle cx='284' cy='250' r='3'/><circle cx='284' cy='230' r='3'/>
+<circle cx='302' cy='223' r='2.5'/><circle cx='318' cy='220' r='2.5'/><circle cx='334' cy='223' r='2.5'/><circle cx='342' cy='235' r='2.5'/><circle cx='342' cy='250' r='2.5'/><circle cx='334' cy='260' r='2.5'/><circle cx='318' cy='263' r='2.5'/><circle cx='302' cy='260' r='2.5'/><circle cx='295' cy='250' r='2.5'/><circle cx='295' cy='235' r='2.5'/>
+<circle cx='312' cy='233' r='2'/><circle cx='326' cy='233' r='2'/><circle cx='332' cy='243' r='2'/><circle cx='326' cy='253' r='2'/><circle cx='312' cy='253' r='2'/><circle cx='306' cy='243' r='2'/>
+<circle cx='320' cy='243' r='1.5'/>
+
+<!-- Cluster 6 center(170,320) -->
+<circle cx='140' cy='295' r='3'/><circle cx='158' cy='287' r='3'/><circle cx='178' cy='287' r='3'/><circle cx='195' cy='295' r='3'/><circle cx='202' cy='310' r='3'/><circle cx='202' cy='330' r='3'/><circle cx='195' cy='345' r='3'/><circle cx='178' cy='353' r='3'/><circle cx='158' cy='353' r='3'/><circle cx='140' cy='345' r='3'/><circle cx='134' cy='330' r='3'/><circle cx='134' cy='310' r='3'/>
+<circle cx='152' cy='303' r='2.5'/><circle cx='168' cy='300' r='2.5'/><circle cx='184' cy='303' r='2.5'/><circle cx='192' cy='315' r='2.5'/><circle cx='192' cy='330' r='2.5'/><circle cx='184' cy='340' r='2.5'/><circle cx='168' cy='343' r='2.5'/><circle cx='152' cy='340' r='2.5'/><circle cx='145' cy='330' r='2.5'/><circle cx='145' cy='315' r='2.5'/>
+<circle cx='162' cy='313' r='2'/><circle cx='176' cy='313' r='2'/><circle cx='182' cy='323' r='2'/><circle cx='176' cy='333' r='2'/><circle cx='162' cy='333' r='2'/><circle cx='156' cy='323' r='2'/>
+<circle cx='170' cy='323' r='1.5'/>
+
+<!-- Cluster 7 center(340,350) -->
+<circle cx='310' cy='325' r='3'/><circle cx='328' cy='317' r='3'/><circle cx='348' cy='317' r='3'/><circle cx='365' cy='325' r='3'/><circle cx='372' cy='340' r='3'/><circle cx='372' cy='360' r='3'/><circle cx='365' cy='375' r='3'/><circle cx='348' cy='383' r='3'/><circle cx='328' cy='383' r='3'/><circle cx='310' cy='375' r='3'/><circle cx='304' cy='360' r='3'/><circle cx='304' cy='340' r='3'/>
+<circle cx='322' cy='333' r='2.5'/><circle cx='338' cy='330' r='2.5'/><circle cx='354' cy='333' r='2.5'/><circle cx='362' cy='345' r='2.5'/><circle cx='362' cy='360' r='2.5'/><circle cx='354' cy='370' r='2.5'/><circle cx='338' cy='373' r='2.5'/><circle cx='322' cy='370' r='2.5'/><circle cx='315' cy='360' r='2.5'/><circle cx='315' cy='345' r='2.5'/>
+<circle cx='332' cy='343' r='2'/><circle cx='346' cy='343' r='2'/><circle cx='352' cy='353' r='2'/><circle cx='346' cy='363' r='2'/><circle cx='332' cy='363' r='2'/><circle cx='326' cy='353' r='2'/>
+<circle cx='340' cy='353' r='1.5'/>
+
+<!-- Cluster 8 center(180,50) - partial at top for tiling -->
+<circle cx='150' cy='25' r='3'/><circle cx='168' cy='17' r='3'/><circle cx='188' cy='17' r='3'/><circle cx='205' cy='25' r='3'/><circle cx='212' cy='40' r='3'/><circle cx='212' cy='60' r='3'/><circle cx='205' cy='75' r='3'/><circle cx='188' cy='83' r='3'/><circle cx='168' cy='83' r='3'/><circle cx='150' cy='75' r='3'/><circle cx='144' cy='60' r='3'/><circle cx='144' cy='40' r='3'/>
+<circle cx='162' cy='33' r='2.5'/><circle cx='178' cy='30' r='2.5'/><circle cx='194' cy='33' r='2.5'/><circle cx='202' cy='45' r='2.5'/><circle cx='202' cy='60' r='2.5'/><circle cx='194' cy='70' r='2.5'/><circle cx='178' cy='73' r='2.5'/><circle cx='162' cy='70' r='2.5'/><circle cx='155' cy='60' r='2.5'/><circle cx='155' cy='45' r='2.5'/>
+<circle cx='172' cy='43' r='2'/><circle cx='186' cy='43' r='2'/><circle cx='192' cy='53' r='2'/><circle cx='186' cy='63' r='2'/><circle cx='172' cy='63' r='2'/><circle cx='166' cy='53' r='2'/>
+<circle cx='180' cy='53' r='1.5'/>
+</g>
+</svg>
