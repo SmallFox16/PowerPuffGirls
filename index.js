@@ -58,10 +58,6 @@ const PADDLE_W = paddle.offsetWidth;
 const PADDLE_H = paddle.offsetHeight;
 const PADDLE_SPEED = 400;
 
-const BRICK1W = brick1.offsetWidth;
-const BRICK1H = brick1.offsetHeight;
-const brick1X = brick1.offsetLeft + document.getElementById('brickContainer').offsetLeft - BRICK_W / 2;
-const brick1Y = brick1.offsetTop + document.getElementById('brickContainer').offsetTop;
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let ballX = GAME_W / 2 - BALL_SIZE / 2;
@@ -236,8 +232,7 @@ function loseLife() {
 
 // Brick-Ball collision handler function. Auggie 4/19
 // Checks entire array of bricks "bricks" against the ball's position to detect and handle collisions.
-// TODO: Brick removal should be added here later. 
-// IMPORTANT: Brick disappearing can be handled here.
+// Reflects the ball based on which face of the brick was hit (top/bottom vs left/right).
 function ballBrickCollision(){
     for (const brick of bricks) {
         if (!brick.active) continue;
@@ -246,8 +241,26 @@ function ballBrickCollision(){
                     ballY + BALL_SIZE > brick.y &&
                     ballY < brick.y + BRICK_H;
         if (hit) {
-            ballDY *= -1; // TODO: replace with angle-based bounce logic
+            // Determine which face the ball hit by comparing overlap depths.
+            // The smallest overlap tells us which side the ball entered from.
+            const overlapLeft   = (ballX + BALL_SIZE) - brick.x;
+            const overlapRight  = (brick.x + BRICK_W) - ballX;
+            const overlapTop    = (ballY + BALL_SIZE) - brick.y;
+            const overlapBottom = (brick.y + BRICK_H) - ballY;
+
+            const minOverlapX = Math.min(overlapLeft, overlapRight);
+            const minOverlapY = Math.min(overlapTop, overlapBottom);
+
+            if (minOverlapX < minOverlapY) {
+                // Side hit — reverse horizontal direction
+                ballDX *= -1;
+            } else {
+                // Top or bottom hit — reverse vertical direction
+                ballDY *= -1;
+            }
+
             brick.active = false;
+            brick.el.classList.add('brickDestroyed');
             break; // early exit, ball can only hit one brick per frame
         }
     }
@@ -299,7 +312,11 @@ function update(timestamp) {
         ballDY = Math.abs(ballDY);
     }
 
-    // Paddle collision
+    // Paddle collision — angle-based reflection
+    // The ball's outgoing angle depends on where it hits the paddle.
+    // Center hit = straight up, edges = steep angles. This gives the
+    // player skill-based control over the ball's trajectory.
+    const BALL_SPEED = Math.sqrt(ballDX * ballDX + ballDY * ballDY);
     const paddleTop = GAME_H - PADDLE_H;
     if (
         ballY + BALL_SIZE >= paddleTop &&
@@ -308,7 +325,18 @@ function update(timestamp) {
         ballX <= paddleX + PADDLE_W
     ) {
         ballY = paddleTop - BALL_SIZE;
-        ballDY = -Math.abs(ballDY);
+
+        // hitPos: 0.0 = left edge, 1.0 = right edge
+        const ballCenter = ballX + BALL_SIZE / 2;
+        const hitPos = (ballCenter - paddleX) / PADDLE_W;
+
+        // Map to angle: -60° (left edge) to +60° (right edge)
+        // 0° is straight up. Range keeps the ball playable (never goes flat).
+        const MAX_ANGLE = Math.PI / 3; // 60 degrees
+        const angle = (hitPos - 0.5) * 2 * MAX_ANGLE;
+
+        ballDX =  BALL_SPEED * Math.sin(angle);
+        ballDY = -BALL_SPEED * Math.cos(angle);
     }
     
     // Brick collision
