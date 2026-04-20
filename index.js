@@ -12,13 +12,13 @@ const brickContainer = document.getElementById("brickContainer");
 // hunting for magic numbers through the loop.
 // Math: 10 * 60px + 9 * 7px + 8px offset = 671px (fits 725px canvas)
 //       5 * 25px + 4 * 7px + 8px offset = 161px (fits 200px container)
-const BRICK_COLS  = 10;
+const BRICK_COLS  = 8;
 const BRICK_ROWS  = 5;
 const BRICK_W     = 60;
 const BRICK_H     = 25;
 const BRICK_GAP   = 7;
-const BRICK_OFF_X = 8;   // left margin so bricks don't touch the container edge
-const BRICK_OFF_Y = 8;   // top margin so bricks don't touch the top of the container
+const BRICK_OFF_X = 60;  // ~1 brick width inset from each side
+const BRICK_OFF_Y = 58;  // ~2 brick heights below the ceiling
 
 // One color per row, indexed top-to-bottom.
 // This is temporary just for visual feedback.
@@ -28,14 +28,20 @@ const ROW_COLORS = ["#DF414D", "#EF7B99", "#62C3AE", "#51BBE7", "#86D43A"];
 // this array on every frame without re-querying the DOM.
 let bricks = [];
 
+// Odd rows are shifted right by half a brick+gap to create a staggered
+// brick wall pattern. The container clips any overflow at the edges.
+const BRICK_STEP = BRICK_W + BRICK_GAP; // horizontal distance between brick starts
+const BRICK_SHIFT = BRICK_STEP / 2;     // 50% offset for odd rows
+
 for(let r = 0; r < BRICK_ROWS; r++) {
+    const isOddRow = r % 2 === 1;
+    const rowOffset = isOddRow ? BRICK_SHIFT : 0;
+
     for(let c = 0; c < BRICK_COLS; c++) {
         const el = document.createElement("div");
         el.classList.add("brick");
 
-        // Position is computed from row/col index so every brick lands
-        // in the correct grid cell regardless of total rows or columns.
-        const x = BRICK_OFF_X + c * (BRICK_W + BRICK_GAP);
+        const x = BRICK_OFF_X + c * BRICK_STEP + rowOffset;
         const y = BRICK_OFF_Y + r * (BRICK_H + BRICK_GAP);
 
         el.style.left            = x + "px";
@@ -44,11 +50,9 @@ for(let r = 0; r < BRICK_ROWS; r++) {
 
         brickContainer.appendChild(el);
 
-        // x and y are stored alongside the element so collision code
-        // never needs to recalculate position from the DOM each frame.
         bricks.push({el: el, x: x, y: y, active: true});
     }
-} // Generates 5 rows x 10 columns = 50 bricks into #brickContainer
+} // Generates 5 rows x 10 columns = 50 bricks in staggered brick wall layout
 
 // ── Dimensions ────────────────────────────────────────────────────────────────
 const GAME_W = gamespace.clientWidth;
@@ -57,7 +61,8 @@ const BALL_SIZE = ball.offsetWidth;
 const PADDLE_W = paddle.offsetWidth;
 const PADDLE_H = paddle.offsetHeight;
 const PADDLE_SPEED = 400;
-const PADDLE_GAP = 10;
+  const PADDLE_GAP = 10;
+
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let ballX = GAME_W / 2 - BALL_SIZE / 2;
@@ -221,20 +226,25 @@ function updateLivesDisplay() {
 } // Tracks number of lives for the display
 
 function loseLife() {
-    if (lives > 0) {
-        lives--;
-        updateLivesDisplay();
+    lives--;
+    updateLivesDisplay();
+
+    if (lives <= 0) {
+        gameRunning = false;
+        showGameOver();
+        return;
     }
 
-    if (lives === 0) {
-        showGameOver();
-    }
-} // Allows for display to change if life lost, triggers game over at 0 lives
+    // Reset ball to paddle for re-launch
+    launched = false;
+    ballDX = 200;
+    ballDY = -200;
+    launchPrompt.style.display = 'flex';
+}
 
 // Brick-Ball collision handler function. Auggie 4/19
 // Checks entire array of bricks "bricks" against the ball's position to detect and handle collisions.
-// TODO: Brick removal should be added here later. 
-// IMPORTANT: Brick disappearing can be handled here.
+// Reflects the ball based on which face of the brick was hit (top/bottom vs left/right).
 function ballBrickCollision(){
     for (const brick of bricks) {
         if (!brick.active) continue;
@@ -243,8 +253,26 @@ function ballBrickCollision(){
                     ballY + BALL_SIZE > brick.y &&
                     ballY < brick.y + BRICK_H;
         if (hit) {
-            ballDY *= -1; // TODO: replace with angle-based bounce logic
+            // Determine which face the ball hit by comparing overlap depths.
+            // The smallest overlap tells us which side the ball entered from.
+            const overlapLeft   = (ballX + BALL_SIZE) - brick.x;
+            const overlapRight  = (brick.x + BRICK_W) - ballX;
+            const overlapTop    = (ballY + BALL_SIZE) - brick.y;
+            const overlapBottom = (brick.y + BRICK_H) - ballY;
+
+            const minOverlapX = Math.min(overlapLeft, overlapRight);
+            const minOverlapY = Math.min(overlapTop, overlapBottom);
+
+            if (minOverlapX < minOverlapY) {
+                // Side hit — reverse horizontal direction
+                ballDX *= -1;
+            } else {
+                // Top or bottom hit — reverse vertical direction
+                ballDY *= -1;
+            }
+
             brick.active = false;
+            brick.el.classList.add('brickDestroyed');
             break; // early exit, ball can only hit one brick per frame
         }
     }
@@ -305,16 +333,29 @@ function update(timestamp) {
         ballX <= paddleX + PADDLE_W
     ) {
         ballY = paddleTop - BALL_SIZE;
-        ballDY = -Math.abs(ballDY);
+
+        // hitPos: 0.0 = left edge, 1.0 = right edge
+        const ballCenter = ballX + BALL_SIZE / 2;
+        const hitPos = (ballCenter - paddleX) / PADDLE_W;
+
+        // Map to angle: -60° (left edge) to +60° (right edge)
+        // 0° is straight up. Range keeps the ball playable (never goes flat).
+        const MAX_ANGLE = Math.PI / 3; // 60 degrees
+        const angle = (hitPos - 0.5) * 2 * MAX_ANGLE;
+
+        ballDX =  BALL_SPEED * Math.sin(angle);
+        ballDY = -BALL_SPEED * Math.cos(angle);
     }
     
     // Brick collision
     ballBrickCollision();
 
-    // Ball out of bounds
+    // Ball out of bounds — lose a life and reset to paddle
     if (ballY > GAME_H) {
-        gameRunning = false;
-        showGameOver();
+        loseLife();
+        if (!gameRunning) return;
+        applyPositions();
+        requestAnimationFrame(update);
         return;
     }
 
