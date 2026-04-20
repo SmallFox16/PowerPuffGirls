@@ -4,6 +4,7 @@ const gamespace = document.getElementById("gamespace");
 const ball = document.getElementById("ball");
 const paddle = document.getElementById("paddle");
 const lifeElements = document.querySelectorAll(".life");
+const brick1 = document.getElementById('brick1');
 
 // ── Dimensions ────────────────────────────────────────────────────────────────
 const GAME_W = gamespace.clientWidth;
@@ -23,6 +24,7 @@ let ballX = GAME_W / 2 - BALL_SIZE / 2;
 let ballY = GAME_H - 200 - BALL_SIZE;
 let ballDX = 200;
 let ballDY = -200;
+let brick1Alive = true;
 
 let paddleX = GAME_W / 2 - PADDLE_W / 2;
 
@@ -132,7 +134,7 @@ function loseLife() {
     }
 } // Allows for display to change if life lost, triggers game over at 0 lives
 
-// Brick-Ball collision handler function. Auggie 4/17
+// Brick-Ball collision handler function. Auggie 4/19
 // Checks if ball hitbox and brick are overlapping when called.
 // If overlapping, bounces ball. 
 // TODO: Brick removal should be added here later. I added an alive state for collision but it needs a visual 
