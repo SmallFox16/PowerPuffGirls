@@ -12,13 +12,13 @@ const brickContainer = document.getElementById("brickContainer");
 // hunting for magic numbers through the loop.
 // Math: 10 * 60px + 9 * 7px + 8px offset = 671px (fits 725px canvas)
 //       5 * 25px + 4 * 7px + 8px offset = 161px (fits 200px container)
-const BRICK_COLS  = 10;
+const BRICK_COLS  = 8;
 const BRICK_ROWS  = 5;
 const BRICK_W     = 60;
 const BRICK_H     = 25;
 const BRICK_GAP   = 7;
-const BRICK_OFF_X = 8;   // left margin so bricks don't touch the container edge
-const BRICK_OFF_Y = 8;   // top margin so bricks don't touch the top of the container
+const BRICK_OFF_X = 60;  // ~1 brick width inset from each side
+const BRICK_OFF_Y = 58;  // ~2 brick heights below the ceiling
 
 // One color per row, indexed top-to-bottom.
 // This is temporary just for visual feedback.
@@ -28,14 +28,20 @@ const ROW_COLORS = ["#DF414D", "#EF7B99", "#62C3AE", "#51BBE7", "#86D43A"];
 // this array on every frame without re-querying the DOM.
 let bricks = [];
 
+// Odd rows are shifted right by half a brick+gap to create a staggered
+// brick wall pattern. The container clips any overflow at the edges.
+const BRICK_STEP = BRICK_W + BRICK_GAP; // horizontal distance between brick starts
+const BRICK_SHIFT = BRICK_STEP / 2;     // 50% offset for odd rows
+
 for(let r = 0; r < BRICK_ROWS; r++) {
+    const isOddRow = r % 2 === 1;
+    const rowOffset = isOddRow ? BRICK_SHIFT : 0;
+
     for(let c = 0; c < BRICK_COLS; c++) {
         const el = document.createElement("div");
         el.classList.add("brick");
 
-        // Position is computed from row/col index so every brick lands
-        // in the correct grid cell regardless of total rows or columns.
-        const x = BRICK_OFF_X + c * (BRICK_W + BRICK_GAP);
+        const x = BRICK_OFF_X + c * BRICK_STEP + rowOffset;
         const y = BRICK_OFF_Y + r * (BRICK_H + BRICK_GAP);
 
         el.style.left            = x + "px";
@@ -44,11 +50,9 @@ for(let r = 0; r < BRICK_ROWS; r++) {
 
         brickContainer.appendChild(el);
 
-        // x and y are stored alongside the element so collision code
-        // never needs to recalculate position from the DOM each frame.
         bricks.push({el: el, x: x, y: y, active: true});
     }
-} // Generates 5 rows x 10 columns = 50 bricks into #brickContainer
+} // Generates 5 rows x 10 columns = 50 bricks in staggered brick wall layout
 
 // ── Dimensions ────────────────────────────────────────────────────────────────
 const GAME_W = gamespace.clientWidth;
