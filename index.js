@@ -58,6 +58,11 @@ const PADDLE_W = paddle.offsetWidth;
 const PADDLE_H = paddle.offsetHeight;
 const PADDLE_SPEED = 400;
 
+const BRICK1W = brick1.offsetWidth;
+const BRICK1H = brick1.offsetHeight;
+const brick1X = brick1.offsetLeft + document.getElementById('brickContainer').offsetLeft - BRICK_W / 2;
+const brick1Y = brick1.offsetTop + document.getElementById('brickContainer').offsetTop;
+
 // ── State ─────────────────────────────────────────────────────────────────────
 let ballX = GAME_W / 2 - BALL_SIZE / 2;
 let ballY = GAME_H - 200 - BALL_SIZE;
