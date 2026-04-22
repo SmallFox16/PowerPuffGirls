@@ -96,6 +96,16 @@ let launched = false;
 
 let lives = 3;
 
+// ── Pause state ───────────────────────────────────────────────────────────────
+// Tracks whether the player has paused the game mid-round. Checked in the
+// update loop as a second gate alongside gameRunning. Kept as a flat boolean
+// for the same reason as 'launched' — there is no intermediate state between
+// playing and paused that needs to be represented.
+// resumeGame() is responsible for re-entering the loop when this flips back.
+// - Cooper 4/20/2026
+let paused = false;
+
+
 // ── Game Over overlay ─────────────────────────────────────────────────────────
 const overlay = document.createElement("div");
 overlay.id = "gameOverOverlay";
@@ -185,6 +195,87 @@ function hideLaunchPrompt() {
     launchPrompt.style.display = 'none';
 }
 
+// ── Pause overlay ─────────────────────────────────────────────────────────────
+// Created in JS to stay co-located with the pause/resume logic that controls it,
+// consistent with the game-over and launch prompt overlay pattern.
+// Contains three buttons: Resume (functional), Restart and Main Menu (stubs).
+// Restart and Main Menu are intentionally empty — they are placeholders for
+// future PBIs. The button elements exist so those PBIs have a clear hook point
+// without needing to restructure this overlay.
+// -Cooper 4/20/2026
+const pauseOverlay = document.createElement("div");
+pauseOverlay.id = "pauseOverlay";
+pauseOverlay.style.cssText = `
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(247, 207, 217, 0.92);
+    color: #3a2a3f;
+    font-family: sans-serif;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    border-radius: 12px;
+    z-index: 10;
+`;
+ 
+const pauseTitle = document.createElement("div");
+pauseTitle.textContent = "PAUSED";
+pauseTitle.style.cssText = `
+    font-size: 3rem;
+    font-weight: bold;
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+`;
+ 
+// Shared button style string — defined once and reused across all three buttons
+// so that visual changes only need to be made in one place.
+const pauseBtnStyle = `
+    width: 200px;
+    padding: 12px 0;
+    font-size: 1rem;
+    font-weight: bold;
+    font-family: sans-serif;
+    border-radius: 999px;
+    border: 2.5px solid #3a2a3f;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    background: #3a2a3f;
+    color: #fba5d0;
+`;
+ 
+const resumeBtn = document.createElement("button");
+resumeBtn.textContent = "RESUME";
+resumeBtn.style.cssText = pauseBtnStyle;
+resumeBtn.addEventListener("click", resumeGame);
+ 
+const restartBtn = document.createElement("button");
+restartBtn.textContent = "RESTART";
+restartBtn.style.cssText = pauseBtnStyle;
+restartBtn.addEventListener("click", () => {
+    // TODO: Implement restart logic (future PBI).
+    // At this point the game is paused. A restart should:
+    //   1. Reset all game state (ball, paddle, bricks, lives, launched)
+    //   2. Hide this overlay
+    //   3. Return the game to the pre-launch waiting state
+});
+ 
+const mainMenuBtn = document.createElement("button");
+mainMenuBtn.textContent = "MAIN MENU";
+mainMenuBtn.style.cssText = pauseBtnStyle;
+mainMenuBtn.addEventListener("click", () => {
+    // TODO: Implement main menu navigation (future PBI).
+    // Navigate the player to the main menu screen when it exists.
+    // Consider whether unsaved progress or high scores need to be handled here.
+});
+ 
+pauseOverlay.appendChild(pauseTitle);
+pauseOverlay.appendChild(resumeBtn);
+pauseOverlay.appendChild(restartBtn);
+pauseOverlay.appendChild(mainMenuBtn);
+gamespace.appendChild(pauseOverlay);
+
 // ── Launch trigger ─────────────────────────────────────────────────────────────────
 // Both input methods (spacebar and click) funnel into this single function.
 // Centralizing here means the 'launch once' guard only has to live in one
@@ -201,21 +292,56 @@ function triggerLaunch() {
     hideLaunchPrompt();
 }
 
+// ── Pause / resume logic ──────────────────────────────────────────────────────
+// togglePause() is the single entry point for both the Escape key and the
+// on-screen pause button. It delegates to pauseGame() or resumeGame() depending
+// on current state. resumeGame() is also called directly by the Resume button
+// inside the pause overlay, which is why it exists as a named function rather
+// than being inlined inside togglePause().
+// -Cooper 4/20/2026
+function pauseGame() {
+    // Guard: only allow pausing if the game is actively running and the ball is
+    // in flight. Pausing before launch or after game over would leave the game
+    // in a broken state where the loop never restarts.
+    if (!gameRunning || !launched) return;
+    paused = true;
+    pauseOverlay.style.display = "flex";
+}
+ 
+function resumeGame() {
+    paused = false;
+    pauseOverlay.style.display = "none";
+    // Reset lastTime so the first frame after resuming calculates a normal dt.
+    // Without this, dt would equal the full duration of the pause (potentially
+    // many seconds), launching the ball across the canvas in a single frame.
+    lastTime = null;
+    requestAnimationFrame(update);
+}
+ 
+function togglePause() {
+    // Guard: do nothing if the game is over or the ball hasn't launched yet.
+    // This prevents Escape from opening the pause screen on the end-state overlays.
+    if (!gameRunning || !launched) return;
+    if (paused) {
+        resumeGame();
+    } else {
+        pauseGame();
+    }
+}
 
 // ── Input: keyboard ───────────────────────────────────────────────────────────
-document.addEventListener("keydown", e => { keys[e.key] = true; });
-document.addEventListener("keyup",   e => { keys[e.key] = false; });
-
-// Spacebar is checked inside the existing keydown listener rather than adding
-// a second document-level listener. Two listeners for the same event on the
-// same element would work, but consolidating keeps the event handling readable.
-// - Cooper
-
-document.addEventListener('keydown', e => {
+// All key-triggered actions are consolidated into a single keydown listener.
+// A separate listener only for key tracking (keys[]) is kept for the held-key
+// paddle movement in the update loop. Escape and Space are one-shot actions
+// that do not need to be in the keys map.
+document.addEventListener("keydown", e => {
     keys[e.key] = true;
-    if (e.key === ' ') triggerLaunch();
-
+    if (e.key === " ")      triggerLaunch();
+    // Escape toggles pause. Funneled through togglePause() so the guard logic
+    // stays in one place rather than being duplicated here.
+    if (e.key === "Escape") togglePause();
 });
+document.addEventListener("keyup", e => { keys[e.key] = false; });
 
 
 // ── Input: touch drag ─────────────────────────────────────────────────────────
@@ -324,6 +450,12 @@ function ballBrickCollision(){
 // ── Main loop ─────────────────────────────────────────────────────────────────
 function update(timestamp) {
     if (!gameRunning) return;
+
+    // Pause gate: if the player has paused, drop out of the loop entirely.
+    // resumeGame() restarts requestAnimationFrame when the player resumes,
+    // so the loop re-enters cleanly without needing a flag to skip frames.
+    // -Cooper 4/20/2026
+    if (paused) return;
 
     if (lastTime === null) lastTime = timestamp;
     const dt = (timestamp - lastTime) / 1000;

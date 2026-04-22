@@ -25,6 +25,18 @@
                 <div class="life"></div>
                 <div class="life"></div>
             </div>
+            <!--
+                Score display placeholder — reserved for a future PBI.
+                The score label and value should be inserted here when implemented.
+                Styled via .scoreDisplay in style.css to match the livesDisplay row.
+            -->
+            <div class="scoreDisplay"></div>
+            <!--
+                Pause button — calls togglePause() defined in index.js.
+                Positioned absolutely to the right side of #infoTracker via CSS.
+                The Escape key is also wired to togglePause() in the keydown listener.
+            -->
+            <button id="pauseBtn" onclick="togglePause()">❚❚</button>
         </div>
         <script type="text/javascript" src="index.js"></script>
     </body>
