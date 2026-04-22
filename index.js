@@ -29,38 +29,154 @@ let bricks = [];
 
 // Odd rows are shifted right by half a brick+gap to create a staggered
 // brick wall pattern. The container clips any overflow at the edges.
-const BRICK_STEP = BRICK_W + BRICK_GAP; // horizontal distance between brick starts
-const BRICK_SHIFT = BRICK_STEP / 2;     // 50% offset for odd rows
+const BRICK_STEP  = BRICK_W + BRICK_GAP; // horizontal distance between brick starts
+const BRICK_SHIFT = BRICK_STEP / 2;      // 50% offset for odd rows
 
-for(let r = 0; r < BRICK_ROWS; r++) {
-    const isOddRow = r % 2 === 1;
-    const rowOffset = isOddRow ? BRICK_SHIFT : 0;
 
-    for(let c = 0; c < BRICK_COLS; c++) {
-        const el = document.createElement("div");
-        el.classList.add("brick");
+// ── Level 1 Brick layout ──────────────────────────────────────────────────────
+function buildLevel1() {
+    for (let r = 0; r < BRICK_ROWS; r++) {
+        const isOddRow = r % 2 === 1;
+        const rowOffset = isOddRow ? BRICK_SHIFT : 0;
 
-        const x = BRICK_OFF_X + c * BRICK_STEP + rowOffset;
-        const y = BRICK_OFF_Y + r * (BRICK_H + BRICK_GAP);
+        for (let c = 0; c < BRICK_COLS; c++) {
+            const el = document.createElement("div");
+            el.classList.add("brick");
 
-        el.style.left = x + "px";
-        el.style.top  = y + "px";
-        const color = ROW_COLORS[r];
-        el.style.background = `linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 60%), linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 45%), ${color}`;
+            const x = BRICK_OFF_X + c * BRICK_STEP + rowOffset;
+            const y = BRICK_OFF_Y + r * (BRICK_H + BRICK_GAP);
 
-        brickContainer.appendChild(el);
+            el.style.left = x + "px";
+            el.style.top  = y + "px";
+            const color = ROW_COLORS[r];
+            el.style.background = `linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 60%), linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 45%), ${color}`;
 
-        bricks.push({el: el, x: x, y: y, active: true});
+            brickContainer.appendChild(el);
+            bricks.push({ el: el, x: x, y: y, active: true });
+        }
     }
-} // Generates 5 rows x 10 columns = 50 bricks in staggered brick wall layout
+} // Generates 5 rows x 8 columns = 40 bricks in staggered brick wall layout
 
-// Level 2 Brick layout
 
-// Level 3 Brick layout
+// ── Level 2 Brick layout ──────────────────────────────────────────────────────
+function buildLevel2() {
+    for (let r = 0; r < BRICK_ROWS; r++) {
+        const isOddRow = r % 2 === 1;
+        const rowOffset = isOddRow ? BRICK_SHIFT : 0;
 
-// Level 4 Brick layout
+        for (let c = 0; c < BRICK_COLS; c++) {
+            const el = document.createElement("div");
+            el.classList.add("brick");
 
-// Level 5 Brick layout
+            const x = BRICK_OFF_X + c * BRICK_STEP + rowOffset;
+            const y = BRICK_OFF_Y + r * (BRICK_H + BRICK_GAP);
+
+            el.style.left = x + "px";
+            el.style.top  = y + "px";
+            const color = ROW_COLORS[r];
+            el.style.background = `linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 60%), linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 45%), ${color}`;
+
+            brickContainer.appendChild(el);
+            bricks.push({ el: el, x: x, y: y, active: true });
+        }
+    }
+}
+
+
+// ── Level 3 Brick layout ──────────────────────────────────────────────────────
+function buildLevel3() {
+    for (let r = 0; r < BRICK_ROWS; r++) {
+        const isOddRow = r % 2 === 1;
+        const rowOffset = isOddRow ? BRICK_SHIFT : 0;
+
+        for (let c = 0; c < BRICK_COLS; c++) {
+            const el = document.createElement("div");
+            el.classList.add("brick");
+
+            const x = BRICK_OFF_X + c * BRICK_STEP + rowOffset;
+            const y = BRICK_OFF_Y + r * (BRICK_H + BRICK_GAP);
+
+            el.style.left = x + "px";
+            el.style.top  = y + "px";
+            const color = ROW_COLORS[r];
+            el.style.background = `linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 60%), linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 45%), ${color}`;
+
+            brickContainer.appendChild(el);
+            bricks.push({ el: el, x: x, y: y, active: true });
+        }
+    }
+}
+
+
+// ── Level 4 Brick layout ──────────────────────────────────────────────────────
+function buildLevel4() {
+    for (let r = 0; r < BRICK_ROWS; r++) {
+        const isOddRow = r % 2 === 1;
+        const rowOffset = isOddRow ? BRICK_SHIFT : 0;
+
+        for (let c = 0; c < BRICK_COLS; c++) {
+            const el = document.createElement("div");
+            el.classList.add("brick");
+
+            const x = BRICK_OFF_X + c * BRICK_STEP + rowOffset;
+            const y = BRICK_OFF_Y + r * (BRICK_H + BRICK_GAP);
+
+            el.style.left = x + "px";
+            el.style.top  = y + "px";
+            const color = ROW_COLORS[r];
+            el.style.background = `linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 60%), linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 45%), ${color}`;
+
+            brickContainer.appendChild(el);
+            bricks.push({ el: el, x: x, y: y, active: true });
+        }
+    }
+}
+
+
+// ── Level 5 Brick layout ──────────────────────────────────────────────────────
+function buildLevel5() {
+    for (let r = 0; r < BRICK_ROWS; r++) {
+        const isOddRow = r % 2 === 1;
+        const rowOffset = isOddRow ? BRICK_SHIFT : 0;
+
+        for (let c = 0; c < BRICK_COLS; c++) {
+            const el = document.createElement("div");
+            el.classList.add("brick");
+
+            const x = BRICK_OFF_X + c * BRICK_STEP + rowOffset;
+            const y = BRICK_OFF_Y + r * (BRICK_H + BRICK_GAP);
+
+            el.style.left = x + "px";
+            el.style.top  = y + "px";
+            const color = ROW_COLORS[r];
+            el.style.background = `linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 60%), linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 45%), ${color}`;
+
+            brickContainer.appendChild(el);
+            bricks.push({ el: el, x: x, y: y, active: true });
+        }
+    }
+}
+
+
+// ── Level loader ──────────────────────────────────────────────────────────────
+// Wipes the existing brick DOM and array, then builds the requested level.
+// Called on first load and after each level is cleared.
+const TOTAL_LEVELS = 5;
+let currentLevel = 1;
+
+function loadLevel(n) {
+    brickContainer.innerHTML = "";
+    bricks = [];
+    switch (n) {
+        case 1: buildLevel1(); break;
+        case 2: buildLevel2(); break;
+        case 3: buildLevel3(); break;
+        case 4: buildLevel4(); break;
+        case 5: buildLevel5(); break;
+    }
+}
+
+loadLevel(currentLevel);
 
 
 // ── Dimensions ────────────────────────────────────────────────────────────────
@@ -70,7 +186,7 @@ const BALL_SIZE = ball.offsetWidth;
 const PADDLE_W = paddle.offsetWidth;
 const PADDLE_H = paddle.offsetHeight;
 const PADDLE_SPEED = 400;
-  const PADDLE_GAP = 10;
+const PADDLE_GAP = 10;
 
 
 // ── State ─────────────────────────────────────────────────────────────────────
@@ -86,7 +202,7 @@ let gameRunning = true;
 let lastTime = null;
 
 // ── Launch state ──────────────────────────────────────────────────────────────────
-// The ball must not move until the player explicitly triggers launch. 
+// The ball must not move until the player explicitly triggers launch.
 // This boolean is the single gate checked in the update loop. It is intentionally
 // a flat boolean rather than an enum because there is no transitional state
 // between 'waiting' and 'in flight' that needs to be represented.
@@ -156,13 +272,59 @@ function showWin() {
     winOverlay.style.display = "flex";
 }
 
+// ── Level transition overlay ──────────────────────────────────────────────────
+const levelOverlay = document.createElement("div");
+levelOverlay.id = "levelOverlay";
+levelOverlay.style.cssText = `
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(247, 207, 217, 0.8);
+    color: #3a2a3f;
+    font-family: sans-serif;
+    font-size: 3rem;
+    font-weight: bold;
+    letter-spacing: 0.15em;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    z-index: 10;
+`;
+gamespace.appendChild(levelOverlay);
+
+function showLevelTransition(n, callback) {
+    levelOverlay.innerHTML = `<span>LEVEL ${n}</span>`;
+    levelOverlay.style.display = "flex";
+    setTimeout(() => {
+        levelOverlay.style.display = "none";
+        callback();
+    }, 1500);
+}
+
 function checkWin() {
-    if (bricks.every(brick => !brick.active)) {
+    if (!bricks.every(brick => !brick.active)) return false;
+
+    if (currentLevel >= TOTAL_LEVELS) {
         gameRunning = false;
         showWin();
         return true;
     }
-    return false;
+
+    currentLevel++;
+    gameRunning = false;
+
+    showLevelTransition(currentLevel, () => {
+        loadLevel(currentLevel);
+        launched = false;
+        ballDX = 200;
+        ballDY = -200;
+        launchPrompt.style.display = "flex";
+        gameRunning = true;
+        lastTime = null;
+        requestAnimationFrame(update);
+    });
+
+    return true;
 }
 
 // ── Launch prompt overlay ───────────────────────────────────────────────────
@@ -329,6 +491,18 @@ function togglePause() {
     }
 }
 
+// ── Skip level (dev / testing shortcut) ──────────────────────────────────────
+// Press W to instantly clear the current level and advance to the next.
+// On the final level it triggers the win screen instead.
+function skipToNextLevel() {
+    if (!gameRunning) return;
+    bricks.forEach(b => {
+        b.active = false;
+        b.el.classList.add('brickDestroyed');
+    });
+    checkWin();
+}
+
 // ── Input: keyboard ───────────────────────────────────────────────────────────
 // All key-triggered actions are consolidated into a single keydown listener.
 // A separate listener only for key tracking (keys[]) is kept for the held-key
@@ -336,10 +510,9 @@ function togglePause() {
 // that do not need to be in the keys map.
 document.addEventListener("keydown", e => {
     keys[e.key] = true;
-    if (e.key === " ")      triggerLaunch();
-    // Escape toggles pause. Funneled through togglePause() so the guard logic
-    // stays in one place rather than being duplicated here.
-    if (e.key === "Escape") togglePause();
+if (e.key === " ")                   triggerLaunch();
+        if (e.key === "Escape")              togglePause();
+        if (e.key === "w" || e.key === "W")  skipToNextLevel();
 });
 document.addEventListener("keyup", e => { keys[e.key] = false; });
 
@@ -381,7 +554,7 @@ function applyPositions() {
     ball.style.transform = "none";
 
     paddle.style.left      = paddleX + "px";
-    paddle.style.top       = (GAME_H - PADDLE_H - PADDLE_GAP) + "px"; // Auggie 4/19 this raises the paddle. 
+    paddle.style.top       = (GAME_H - PADDLE_H - PADDLE_GAP) + "px"; // Auggie 4/19 this raises the paddle.
     paddle.style.transform = "none";
 }
 
@@ -415,7 +588,7 @@ function loseLife() {
 // Brick-Ball collision handler function. Auggie 4/19
 // Checks entire array of bricks "bricks" against the ball's position to detect and handle collisions.
 // Reflects the ball based on which face of the brick was hit (top/bottom vs left/right).
-function ballBrickCollision(){
+function ballBrickCollision() {
     for (const brick of bricks) {
         if (!brick.active) continue;
         const hit = ballX + BALL_SIZE > brick.x &&
@@ -447,6 +620,7 @@ function ballBrickCollision(){
         }
     }
 }
+
 // ── Main loop ─────────────────────────────────────────────────────────────────
 function update(timestamp) {
     if (!gameRunning) return;
@@ -523,7 +697,7 @@ function update(timestamp) {
         ballDX =  BALL_SPEED * Math.sin(angle);
         ballDY = -BALL_SPEED * Math.cos(angle);
     }
-    
+
     // Brick collision
     ballBrickCollision();
 
