@@ -57,52 +57,84 @@ function buildLevel1() {
     }
 } // Generates 5 rows x 8 columns = 40 bricks in staggered brick wall layout
 
-
-// ── Level 2 Brick layout ──────────────────────────────────────────────────────
+// ── Level 2 Brick layout — Level 1 layout + armored bricks ───────────────────
+// Same staggered full grid as Level 1.
+// Bricks marked in TOUGH_L2 require two hits — shown with a stripe + crack visual.
 function buildLevel2() {
-    for (let r = 0; r < BRICK_ROWS; r++) {
-        const isOddRow = r % 2 === 1;
-        const rowOffset = isOddRow ? BRICK_SHIFT : 0;
+    // "r-c" positions that are 2-hit bricks — spread across the grid
+    const TOUGH_L2 = new Set([
+        "0-1","0-5",
+        "1-3","1-6",
+        "2-0","2-4",
+        "3-2","3-7",
+        "4-4",
+    ]);
 
+    for (let r = 0; r < BRICK_ROWS; r++) {
+        const rowOffset = (r % 2 === 1) ? BRICK_SHIFT : 0;
         for (let c = 0; c < BRICK_COLS; c++) {
             const el = document.createElement("div");
             el.classList.add("brick");
 
             const x = BRICK_OFF_X + c * BRICK_STEP + rowOffset;
             const y = BRICK_OFF_Y + r * (BRICK_H + BRICK_GAP);
-
             el.style.left = x + "px";
             el.style.top  = y + "px";
-            const color = ROW_COLORS[r];
-            el.style.background = `linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 60%), linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 45%), ${color}`;
+
+            const isTough = TOUGH_L2.has(`${r}-${c}`);
+            const color   = ROW_COLORS[r];
+
+            el.style.background = `
+                linear-gradient(135deg, rgba(255,255,255,0.5) 0%, transparent 45%),
+                linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 50%),
+                ${color}
+            `;
+
+            if (isTough) el.classList.add("brick-tough");
 
             brickContainer.appendChild(el);
-            bricks.push({ el: el, x: x, y: y, active: true });
+            bricks.push({ el, x, y, active: true, hits: isTough ? 2 : 1 });
         }
     }
 }
 
 
-// ── Level 3 Brick layout ──────────────────────────────────────────────────────
+// ── Level 3 Brick layout — Full grid + heavy armour ───────────────────────────
+// Same staggered full grid as Level 1 & 2.
+// ~18 bricks are 2-hit (vs 9 in Level 2), spread so every row has armoured bricks.
 function buildLevel3() {
-    for (let r = 0; r < BRICK_ROWS; r++) {
-        const isOddRow = r % 2 === 1;
-        const rowOffset = isOddRow ? BRICK_SHIFT : 0;
+    const TOUGH_L3 = new Set([
+        "0-0","0-3","0-5","0-7",
+        "1-1","1-4","1-6",
+        "2-2","2-4","2-5","2-7",
+        "3-0","3-2","3-5","3-7",
+        "4-1","4-3","4-6",
+    ]);
 
+    for (let r = 0; r < BRICK_ROWS; r++) {
+        const rowOffset = (r % 2 === 1) ? BRICK_SHIFT : 0;
         for (let c = 0; c < BRICK_COLS; c++) {
             const el = document.createElement("div");
             el.classList.add("brick");
 
             const x = BRICK_OFF_X + c * BRICK_STEP + rowOffset;
             const y = BRICK_OFF_Y + r * (BRICK_H + BRICK_GAP);
-
             el.style.left = x + "px";
             el.style.top  = y + "px";
-            const color = ROW_COLORS[r];
-            el.style.background = `linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 60%), linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 45%), ${color}`;
+
+            const isTough = TOUGH_L3.has(`${r}-${c}`);
+            const color   = ROW_COLORS[r];
+
+            el.style.background = `
+                linear-gradient(135deg, rgba(255,255,255,0.5) 0%, transparent 45%),
+                linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 50%),
+                ${color}
+            `;
+
+            if (isTough) el.classList.add("brick-tough");
 
             brickContainer.appendChild(el);
-            bricks.push({ el: el, x: x, y: y, active: true });
+            bricks.push({ el, x, y, active: true, hits: isTough ? 2 : 1 });
         }
     }
 }
@@ -585,9 +617,10 @@ function loseLife() {
     launchPrompt.style.display = 'flex';
 }
 
-// Brick-Ball collision handler function. Auggie 4/19
-// Checks entire array of bricks "bricks" against the ball's position to detect and handle collisions.
-// Reflects the ball based on which face of the brick was hit (top/bottom vs left/right).
+// ── Brick-Ball collision handler ──────────────────────────────────────────────
+// Handles both single-hit and multi-hit bricks.
+// On first hit of a 2-hit brick: decrement hits, show cracked visual, no destroy.
+// On final hit (hits reaches 0): destroy as normal.
 function ballBrickCollision() {
     for (const brick of bricks) {
         if (!brick.active) continue;
@@ -614,8 +647,20 @@ function ballBrickCollision() {
                 ballDY *= -1;
             }
 
-            brick.active = false;
-            brick.el.classList.add('brickDestroyed');
+            // Default hits to 1 for any brick that pre-dates this system
+            if (brick.hits == null) brick.hits = 1;
+            brick.hits--;
+
+            if (brick.hits <= 0) {
+                // Fully destroyed
+                brick.active = false;
+                brick.el.classList.remove('brick-tough', 'brick-damaged');
+                brick.el.classList.add('brickDestroyed');
+            } else {
+                // First hit on a 2-hit brick — strip armour, looks like a normal brick
+                brick.el.classList.remove('brick-tough');
+            }
+
             break; // early exit, ball can only hit one brick per frame
         }
     }
