@@ -54,6 +54,15 @@ for(let r = 0; r < BRICK_ROWS; r++) {
     }
 } // Generates 5 rows x 10 columns = 50 bricks in staggered brick wall layout
 
+// Level 2 Brick layout
+
+// Level 3 Brick layout
+
+// Level 4 Brick layout
+
+// Level 5 Brick layout
+
+
 // ── Dimensions ────────────────────────────────────────────────────────────────
 const GAME_W = gamespace.clientWidth;
 const GAME_H = gamespace.clientHeight;
