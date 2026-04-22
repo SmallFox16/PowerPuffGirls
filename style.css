@@ -80,6 +80,15 @@ body {
 /* ── Game layout ───────────────────────────────────────────────────────────── */
 
 
+#logo {
+    border: 3px solid var(--ppg-bubbles-soft);
+    border-radius: 12px;
+    width: 725px;
+    height: 175px;
+    margin: 0 auto;
+    position: relative;
+}
+
 #gamespace {
     background:
         url("dots.svg"),
@@ -89,7 +98,7 @@ body {
     border: 3px solid var(--ppg-bubbles-soft);
     border-radius: 12px;
     width: 725px;
-    height: 625px;
+    height: 550px;
     margin: 0 auto;
     position: relative;
     z-index: 1;
