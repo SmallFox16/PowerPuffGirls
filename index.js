@@ -143,23 +143,33 @@ function buildLevel3() {
 // ── Level 4 Brick layout ──────────────────────────────────────────────────────
 function buildLevel4() {
     for (let r = 0; r < BRICK_ROWS; r++) {
-        const isOddRow = r % 2 === 1;
-        const rowOffset = isOddRow ? BRICK_SHIFT : 0;
-
         for (let c = 0; c < BRICK_COLS; c++) {
+
+            const isEdge =
+                r === 0 ||
+                r === BRICK_ROWS - 1 ||
+                c === 0 ||
+                c === BRICK_COLS - 1;
+
+            if (!isEdge) continue;
+
             const el = document.createElement("div");
             el.classList.add("brick");
 
-            const x = BRICK_OFF_X + c * BRICK_STEP + rowOffset;
+            const x = BRICK_OFF_X + c * BRICK_STEP;
             const y = BRICK_OFF_Y + r * (BRICK_H + BRICK_GAP);
 
             el.style.left = x + "px";
             el.style.top  = y + "px";
-            const color = ROW_COLORS[r];
-            el.style.background = `linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 60%), linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 45%), ${color}`;
+
+            const isTough = (r === 0 || r === BRICK_ROWS - 1);
+
+            if (isTough) el.classList.add("brick-tough");
+
+            el.style.background = ROW_COLORS[r];
 
             brickContainer.appendChild(el);
-            bricks.push({ el: el, x: x, y: y, active: true });
+            bricks.push({ el, x, y, active: true, hits: isTough ? 2 : 1 });
         }
     }
 }
@@ -168,23 +178,27 @@ function buildLevel4() {
 // ── Level 5 Brick layout ──────────────────────────────────────────────────────
 function buildLevel5() {
     for (let r = 0; r < BRICK_ROWS; r++) {
-        const isOddRow = r % 2 === 1;
-        const rowOffset = isOddRow ? BRICK_SHIFT : 0;
+        const startCol = Math.floor(r / 2);
+        const endCol = BRICK_COLS - startCol;
 
-        for (let c = 0; c < BRICK_COLS; c++) {
+        for (let c = startCol; c < endCol; c++) {
             const el = document.createElement("div");
             el.classList.add("brick");
 
-            const x = BRICK_OFF_X + c * BRICK_STEP + rowOffset;
+            const x = BRICK_OFF_X + c * BRICK_STEP;
             const y = BRICK_OFF_Y + r * (BRICK_H + BRICK_GAP);
 
             el.style.left = x + "px";
             el.style.top  = y + "px";
-            const color = ROW_COLORS[r];
-            el.style.background = `linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 60%), linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 45%), ${color}`;
+
+            const isTough = (r === 0 || c === startCol || c === endCol - 1);
+
+            if (isTough) el.classList.add("brick-tough");
+
+            el.style.background = ROW_COLORS[r];
 
             brickContainer.appendChild(el);
-            bricks.push({ el: el, x: x, y: y, active: true });
+            bricks.push({ el, x, y, active: true, hits: isTough ? 2 : 1 });
         }
     }
 }
