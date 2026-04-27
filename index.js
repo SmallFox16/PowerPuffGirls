@@ -244,6 +244,17 @@ let ballDY = -200;
 let paddleX = GAME_W / 2 - PADDLE_W / 2;
 
 let keys = {};
+
+// Keys captured here are ignored by the keydown handler until the player
+// physically releases them. Used by restartGame() so that a key held at the
+// moment of restart (e.g. ArrowLeft, causing the paddle to be in motion when
+// the player paused) does not immediately resume moving the paddle the
+// instant restart finishes. The OS fires keydown auto-repeat while a key is
+// held, so simply clearing keys[] in restartGame() is not enough — the next
+// auto-repeat would refill it. keyup clears the suppression so the player
+// can re-press normally afterwards.
+let suppressedKeys = new Set();
+
 let gameRunning = true;
 let lastTime = null;
 
@@ -361,10 +372,7 @@ function checkWin() {
 
     showLevelTransition(currentLevel, () => {
         loadLevel(currentLevel);
-        launched = false;
-        ballDX = 200;
-        ballDY = -200;
-        launchPrompt.style.display = "flex";
+        resetBallForLaunch();
         gameRunning = true;
         lastTime = null;
         requestAnimationFrame(update);
@@ -461,13 +469,7 @@ resumeBtn.addEventListener("click", resumeGame);
 const restartBtn = document.createElement("button");
 restartBtn.textContent = "RESTART";
 restartBtn.style.cssText = pauseBtnStyle;
-restartBtn.addEventListener("click", () => {
-    // TODO: Implement restart logic (future PBI).
-    // At this point the game is paused. A restart should:
-    //   1. Reset all game state (ball, paddle, bricks, lives, launched)
-    //   2. Hide this overlay
-    //   3. Return the game to the pre-launch waiting state
-});
+restartBtn.addEventListener("click", restartGame);
  
 const mainMenuBtn = document.createElement("button");
 mainMenuBtn.textContent = "MAIN MENU";
@@ -483,6 +485,14 @@ pauseOverlay.appendChild(resumeBtn);
 pauseOverlay.appendChild(restartBtn);
 pauseOverlay.appendChild(mainMenuBtn);
 gamespace.appendChild(pauseOverlay);
+
+// Stop clicks on the pause overlay from bubbling up to the gamespace click
+// handler (which calls triggerLaunch). Without this, clicking RESTART would
+// fire restartGame() — which sets launched = false — and then the same click
+// would bubble to gamespace, flipping launched back to true and auto-firing
+// the ball the moment the overlay disappears. Attaching here on the overlay
+// itself covers all current and future buttons inside it.
+pauseOverlay.addEventListener("click", e => e.stopPropagation());
 
 // ── Launch trigger ─────────────────────────────────────────────────────────────────
 // Both input methods (spacebar and click) funnel into this single function.
@@ -537,6 +547,89 @@ function togglePause() {
     }
 }
 
+// ── Ball respawn helper ──────────────────────────────────────────────────────
+// Shared by life loss, level transitions, and the pause-menu restart. Each of
+// those flows previously inlined the same four assignments to send the ball
+// back to the paddle for re-launch. Centralising here means the next change
+// to spawn velocity or to the launch-prompt overlay only needs editing in
+// one place.
+//
+// Deliberately does NOT recentre paddleX: life loss and level transitions
+// leave the paddle wherever the player last had it, which is friendlier than
+// yanking it to the centre mid-run. restartGame() handles paddle re-centring
+// itself because a full game restart is the one flow where re-centring is
+// appropriate.
+//
+// Anchors ballX / ballY to the current paddle position eagerly. The update
+// loop's !launched branch already re-anchors on every frame, but doing it
+// here as well removes the one-frame window where applyPositions() (called
+// by both restartGame() and the level-transition callback) would otherwise
+// render the ball at its previous mid-flight position before the next frame
+// snaps it back. Without this, restart leaves the ball visibly stuck at its
+// pre-restart coordinates for ~16ms, which reads as "the ball didn't reset".
+function resetBallForLaunch() {
+    launched = false;
+    ballDX = 200;
+    ballDY = -200;
+    ballX = paddleX + PADDLE_W / 2 - BALL_SIZE / 2;
+    ballY = GAME_H - PADDLE_H - BALL_SIZE - PADDLE_GAP - 2;
+    launchPrompt.style.display = "flex";
+}
+
+// ── Restart game ─────────────────────────────────────────────────────────────
+// Wired to the RESTART button inside the pause overlay. Returns the game to
+// the same state it would be in on a fresh page load: Level 1, three lives,
+// freshly built brick wall, paddle centred, ball anchored above it awaiting
+// launch.
+//
+// Hides the game-over and win overlays defensively, even though they cannot
+// currently be visible while the pause overlay is open. This keeps
+// restartGame() ready to be wired into those overlays in a follow-up PBI
+// without restructuring this function.
+//
+// The rAF loop must be re-kicked here: the update loop's pause guard exits
+// the loop on its own when the player pauses, and resumeGame() is the only
+// path that restarts it. Without requestAnimationFrame(update) below the game
+// would appear frozen after the overlay disappears. lastTime = null prevents
+// the first post-restart frame from computing dt against a stale timestamp
+// from before the pause, which would otherwise launch the ball across the
+// canvas in a single frame (same reasoning as resumeGame()).
+//
+// keys = {} clears any held movement keys so the paddle does not drift on
+// its own after restart. The player must re-press to keep moving.
+function restartGame() {
+    currentLevel = 1;
+    loadLevel(currentLevel);
+
+    lives = 3;
+    updateLivesDisplay();
+
+    paddleX = GAME_W / 2 - PADDLE_W / 2;
+    resetBallForLaunch();
+
+    // Mark every currently-held key as suppressed before clearing keys[].
+    // Without the suppression set, OS keydown auto-repeat would immediately
+    // refill keys[] for any key the player still has physically held (most
+    // commonly ArrowLeft / ArrowRight), and the paddle would resume moving
+    // the moment the player launches the new game.
+    for (const k in keys) {
+        if (keys[k]) suppressedKeys.add(k);
+    }
+    keys = {};
+
+    paused = false;
+    gameRunning = true;
+    lastTime = null;
+
+    pauseOverlay.style.display = "none";
+    overlay.style.display = "none";
+    winOverlay.style.display = "none";
+    levelOverlay.style.display = "none";
+
+    applyPositions();
+    requestAnimationFrame(update);
+}
+
 // ── Skip level (dev / testing shortcut) ──────────────────────────────────────
 // Press W to instantly clear the current level and advance to the next.
 // On the final level it triggers the win screen instead.
@@ -555,12 +648,19 @@ function skipToNextLevel() {
 // paddle movement in the update loop. Escape and Space are one-shot actions
 // that do not need to be in the keys map.
 document.addEventListener("keydown", e => {
+    // Held-key suppression: if restart fired while this key was already held,
+    // the OS will keep auto-repeating keydown for it. Ignore those repeats
+    // until the player physically releases and re-presses the key.
+    if (suppressedKeys.has(e.key)) return;
     keys[e.key] = true;
 if (e.key === " ")                   triggerLaunch();
         if (e.key === "Escape")              togglePause();
         if (e.key === "w" || e.key === "W")  skipToNextLevel();
 });
-document.addEventListener("keyup", e => { keys[e.key] = false; });
+document.addEventListener("keyup", e => {
+    keys[e.key] = false;
+    suppressedKeys.delete(e.key);
+});
 
 
 // ── Input: touch drag ─────────────────────────────────────────────────────────
@@ -624,11 +724,7 @@ function loseLife() {
         return;
     }
 
-    // Reset ball to paddle for re-launch
-    launched = false;
-    ballDX = 200;
-    ballDY = -200;
-    launchPrompt.style.display = 'flex';
+    resetBallForLaunch();
 }
 
 // ── Brick-Ball collision handler ──────────────────────────────────────────────
